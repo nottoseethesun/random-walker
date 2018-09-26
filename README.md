@@ -2,6 +2,14 @@
 
 Uses websocket to fetch position data for 'n' robots, and plots their path on the web browser.
 
+## Performance
+
+Works at 1 ms refresh rate with 1 robot, and at 20 ms refresh rate with 8 robots.  Works with 'n' robots.
+
+## Special Features
+
+Automatically picks a set of high-contrast colors, for 'n' robots, to make it easy to distinguish between the different paths of the robots.
+
 ## Prerequisites
 
 * Back-end
