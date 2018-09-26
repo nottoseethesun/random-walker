@@ -23,31 +23,30 @@ type Props = Paths & {
 
 type State = Paths & {
   clearInterval: number;
-  WS: WS.w3cwebsocket;
+  ws: WS.w3cwebsocket;
 };
 
 class RandomWalker extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { paths, refreshRateMS, url } = props;
-    // Avoid changing internal (encapsulated) state via reference to prop:
     this.state = {
-      WS: new WS.w3cwebsocket(`${url}?interval=${refreshRateMS}&numRobots=${paths.length}`),
       clearInterval: -1,
-      paths: clone(paths),
+      paths: clone(paths), // Important: void changing internal (encapsulated) state via reference to prop.
+      ws: new WS.w3cwebsocket(`${url}?interval=${refreshRateMS}&num_robots=${paths.length}`),
     };
     const title = 'random-walker ws client';  // @to-do: move the user-facing messages out to user-text file
-    this.state.WS.onerror = (err) => {
+    this.state.ws.onerror = (err) => {
       console.error(`${title} reports a problem:`);
       console.error(err);
     };
-    this.state.WS.onclose = () => {
+    this.state.ws.onclose = () => {
       console.info(`${title} closed`);
     };
-    this.state.WS.onopen = () => {
+    this.state.ws.onopen = () => {
       console.info(`${title} connected`);
     };
-    this.state.WS.onmessage = this.updateState.bind(this);
+    this.state.ws.onmessage = this.updateState.bind(this);
   }
 
   public componentDidMount() {
@@ -71,7 +70,10 @@ class RandomWalker extends React.Component<Props, State> {
   }
 
   private fetchAndUpdate() {
-    this.state.WS.send('ping');
+    const ws = this.state.ws;
+    if (ws.readyState === ws.OPEN) {
+      ws.send('ping');
+    }
   }
 
 }
