@@ -74,7 +74,7 @@ class RandomWalker extends React.Component<Props, State> {
       const [red, green, blue, alpha] = hexAndRgba.hexToRgba(`#${currentColor}`);
       const context = this.walkCanvas.current.getContext('2d');
       if (context) {
-        context.fillStyle = `rgba(${red},${green},${blue},(${alpha/255})`;
+        context.fillStyle = `rgba(${red},${green},${blue},${alpha}`;
         context.fillRect( x, y, 1, 1 );
       }
     }
@@ -84,7 +84,7 @@ class RandomWalker extends React.Component<Props, State> {
     const { width, height } = this.props;
     return (
       <div className="frbtcs-random-walker">
-        <canvas ref={this.walkCanvas} width={width} height={height} style={{backgroundColor: '#ffffff'}} />
+        <canvas ref={this.walkCanvas} width={width} height={height} style={{backgroundColor: '#000000'}} />
       </div>
     );
   }
