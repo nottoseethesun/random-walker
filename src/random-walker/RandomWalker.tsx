@@ -12,7 +12,7 @@ const COLOR_VARIATION = 'hard';
 
 const ROBOT_ROOT_NAME = 'freight';
 
-type Props = {
+type Props = {  // @to-do: Default props
   numRobots: number;
   url: string;
   refreshRateMS: number;
@@ -69,22 +69,24 @@ class RandomWalker extends React.Component<Props, State> {
   }
 
   public componentDidUpdate() {
-    const { currentColor, x, y } = this.state;
-    if (this.walkCanvas.current && !!this.state.currentColor) { // Note: Normally it's best to just return, but TS requires positive check.
-      const [red, green, blue, alpha] = hexAndRgba.hexToRgba(`#${currentColor}`);
-      const context = this.walkCanvas.current.getContext('2d');
-      if (context) {
-        context.fillStyle = `rgba(${red},${green},${blue},${alpha}`;
-        context.fillRect( x, y, 1, 1 );
+    window.requestAnimationFrame(() => {
+      const { currentColor, x, y } = this.state;
+      if (this.walkCanvas.current && !!this.state.currentColor) { // Note: Normally it's best to just return, but TS requires positive check.
+        const [red, green, blue, alpha] = hexAndRgba.hexToRgba(`#${currentColor}`);
+        const context = this.walkCanvas.current.getContext('2d');
+        if (context) {
+          context.fillStyle = `rgba(${red},${green},${blue},${alpha}`;
+          context.fillRect(x, y, 1, 1);
+        }
       }
-    }
+    });
   }
 
-  public render() {
+  public render() { // @to-do: error boundary
     const { width, height } = this.props;
     return (
       <div className="frbtcs-random-walker">
-        <canvas ref={this.walkCanvas} width={width} height={height} style={{backgroundColor: '#000000'}} />
+        <canvas ref={this.walkCanvas} width={width} height={height} style={{backgroundColor: '#141414'}} />
       </div>
     );
   }
@@ -108,12 +110,12 @@ class RandomWalker extends React.Component<Props, State> {
   }
 
   private updateState(event: { data: string; }) {
-    console.log('- - - update of received event - - - ');
     const data: ServerData = JSON.parse(event.data);
     const { name, x, y } = data;
-    const colorIndex = parseInt(name.replace(ROBOT_ROOT_NAME, ''), 10);
+    const colorIndex = parseInt(name.replace(ROBOT_ROOT_NAME, ''), 10) - 1;
+    const currentColor = this.state.colors[colorIndex];
     this.setState( {
-      currentColor: this.state.colors[colorIndex],
+      currentColor,
       x,
       y,
     } );
@@ -122,7 +124,9 @@ class RandomWalker extends React.Component<Props, State> {
   private fetchAndUpdate() {
     const ws = this.state.ws;
     if (ws.readyState === ws.OPEN) {
-      ws.send(SERVER_PING_MSG);
+      window.requestAnimationFrame( () => { // A cheap way to throttle; network will likely be slower than animation frame.
+        ws.send(SERVER_PING_MSG);
+      } );
     }
   }
 
