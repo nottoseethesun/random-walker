@@ -1,39 +1,27 @@
-import * as clone from 'clone';
 import * as React from 'react';
 import * as WS from 'websocket';
 import './RandomWalker.css';
 
-type Point = {
-  x: number;
-  y: number;
-};
-
-type WalkerPath = {
-  points: Point[];
-};
-
-type Paths = {
-  paths: WalkerPath[];
-};
-
-type Props = Paths & {
+type Props = {
+  numRobots: number;
   url: string;
   refreshRateMS: number;
 };
 
-type State = Paths & {
+type State = {
   clearInterval: number;
+  numRobots: number;
   ws: WS.w3cwebsocket;
 };
 
 class RandomWalker extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { paths, refreshRateMS, url } = props;
+    const { numRobots, refreshRateMS, url } = props;
     this.state = {
       clearInterval: -1,
-      paths: clone(paths), // Important: void changing internal (encapsulated) state via reference to prop.
-      ws: new WS.w3cwebsocket(`${url}?interval=${refreshRateMS}&num_robots=${paths.length}`),
+      numRobots,
+      ws: new WS.w3cwebsocket(`${url}?interval=${refreshRateMS}&num_robots=${numRobots}`),
     };
     const title = 'random-walker ws client';  // @to-do: move the user-facing messages out to user-text file
     this.state.ws.onerror = (err) => {
@@ -59,7 +47,7 @@ class RandomWalker extends React.Component<Props, State> {
   public render() {
     return (
       <div className="frbtcs-random-walker">
-      {this.state.paths[0].points[0].x}
+      {this.state.numRobots}
       </div>
     );
   }
