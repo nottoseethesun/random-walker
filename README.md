@@ -6,6 +6,10 @@ Uses websocket to fetch position data for 'n' robots, and plots their path on th
 
 Works at 1 ms refresh rate with 1 robot, and at 20 ms refresh rate with 8 robots.  Works with 'n' robots.
 
+### Further Optimization
+
+The websocket work could be done from a js worker thread, with a string buffer that is the accumulated result of the websocket responses.  Then the canvas update could draw all of the accumulated points at once, instead of drawing one per animation frame.
+
 ## Special Features
 
 Automatically picks a set of high-contrast colors, for 'n' robots, to make it easy to distinguish between the different paths of the robots.
