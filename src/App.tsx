@@ -13,7 +13,7 @@ class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Test Harness for Random Walker</h1>
         </header>
-        <RandomWalker numRobots={2} refreshRateMS={50} url={'ws://localhost:8000/api/streams/robots/positions/'} />
+        <RandomWalker numRobots={2} refreshRateMS={50} url={'ws://localhost:8000/api/streams/robots/positions/'} width={500} height={500} />
       </div>
     );
   }
